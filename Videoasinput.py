@@ -25,15 +25,23 @@ def recognize_gesture(landmarks):
 
 # Define posture recognition function
 def recognize_posture(pose_landmarks):
-    hip_landmarks = [pose_landmarks.landmark[i] for i in [mp_pose.PoseLandmark.LEFT_HIP.value, mp_pose.PoseLandmark.RIGHT_HIP.value]]
-    if all(hip.y > 0.7 for hip in hip_landmarks):
+    hips = [pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP.value], 
+            pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP.value]]
+    shoulders = [pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER.value], 
+                 pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER.value]]
+    knees = [pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE.value], 
+             pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE.value]]
+
+    if all(abs(hip.y - shoulder.y) < 0.3 for hip, shoulder in zip(hips, shoulders)):
+        return "Lying Down"
+    elif all(hip.y > 0.7 for hip in hips):
         return "Sitting"
     else:
         return "Standing"
 
 # File paths
-input_video_path = 'VID_20240822_161431.mp4'  # Replace with your input video file path
-output_video_path = 'output_video.mp4'  # Replace with your desired output video file path
+input_video_path = 'N3_8.mp4'  # Replace with your input video file path
+output_video_path = 'output_video_N3_8.mp4'  # Replace with your desired output video file path
 
 # Open video file
 cap = cv2.VideoCapture(input_video_path)

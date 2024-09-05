@@ -30,12 +30,22 @@ def recognize_gesture(landmarks):
 
 
 def recognize_posture(pose_landmarks):
-    
-    hip_landmarks = [pose_landmarks.landmark[i] for i in [mp_pose.PoseLandmark.LEFT_HIP.value, mp_pose.PoseLandmark.RIGHT_HIP.value]]
-    if all(hip.y > 0.7 for hip in hip_landmarks):
+    hips = [pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP.value], 
+            pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP.value]]
+    shoulders = [pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER.value], 
+                 pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER.value]]
+    knees = [pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE.value], 
+             pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE.value]]
+
+    if all(abs(hip.y - shoulder.y) < 0.1 for hip, shoulder in zip(hips, shoulders)):
+        return "Lying Down"
+    elif all(abs(hip.y - knee.y) < 0.1 for hip, knee in zip(hips, knees)):
         return "Sitting"
     else:
         return "Standing"
+
+
+# File paths
 
 cap = cv2.VideoCapture(0)
 
