@@ -1,7 +1,7 @@
 
 **2. mideapip-projects**
 
-```markdown
+
 # Mediapipe Projects
 
 ## Overview
